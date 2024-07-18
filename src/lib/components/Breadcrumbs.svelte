@@ -2,7 +2,7 @@
 	export let items: string[] = [];
 </script>
 
-<nav aria-label="Breadcrumb">
+<nav aria-label="Breadcrumb" class="hidden sm:block">
 	<ol class="flex items-center space-x-2">
 		{#each items as item, index}
 			<li>
