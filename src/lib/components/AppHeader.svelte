@@ -1,25 +1,30 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
-	import { Menu } from 'lucide-svelte';
+	import { Menu, ChevronLeft, ChevronRight } from 'lucide-svelte';
 	import SearchBox from './SearchBox.svelte';
-	import Breadcrumbs from './Breadcrumbs.svelte';
 	import UserAvatar from './UserAvatar.svelte';
 
 	export let toggleSidebar: () => void;
-	export let breadcrumbs: string[] = [];
+	export let isSmallScreen: boolean;
+	export let isSidebarOpen: boolean;
 </script>
 
 <header class="flex items-center justify-between bg-white p-4 shadow-sm">
 	<div class="flex items-center space-x-4">
 		<Button variant="ghost" size="icon" on:click={toggleSidebar}>
-			<Menu size={24} />
+			{#if isSmallScreen}
+				<Menu size={24} />
+			{:else if isSidebarOpen}
+				<ChevronLeft size={24} />
+			{:else}
+				<ChevronRight size={24} />
+			{/if}
 		</Button>
-
-		<Breadcrumbs items={breadcrumbs} />
 	</div>
 
+	<SearchBox />
 	<div class="flex items-center space-x-4">
-		<SearchBox />
+		<div class="hidden sm:block"></div>
 		<UserAvatar userInitials="JD" />
 	</div>
 </header>

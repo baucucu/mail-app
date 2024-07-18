@@ -2,16 +2,30 @@
 	import { Home, Gauge, Inbox, Users, Settings } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
 	import { cn } from '$lib/utils';
+	import { page } from '$app/stores';
 
 	export let isCollapsed = false;
+	export let closeSidebar: () => void;
 
 	const navItems = [
-		{ icon: Home, label: 'Home', href: '/' },
-		{ icon: Gauge, label: 'Dashboard', href: '/dashboard' },
-		{ icon: Inbox, label: 'Inbox', href: '/inbox' },
-		{ icon: Users, label: 'Users', href: '/users' },
-		{ icon: Settings, label: 'Settings', href: '/settings' }
+		{ icon: Gauge, label: 'Dashboard', href: '/app' },
+		{ icon: Inbox, label: 'Inbox', href: '/app/inbox' },
+		{ icon: Users, label: 'Users', href: '/app/users' },
+		{ icon: Settings, label: 'Settings', href: '/app/settings' }
 	];
+
+	$: currentPath = $page.url.pathname;
+
+	function isActive(href: string) {
+		if (href === '/app') {
+			return currentPath === href;
+		}
+		return currentPath.startsWith(href);
+	}
+
+	function handleNavClick() {
+		closeSidebar();
+	}
 </script>
 
 <nav
@@ -32,9 +46,12 @@
 			<li class="mb-2">
 				<Button
 					variant="ghost"
+					href={item.href}
+					on:click={handleNavClick}
 					class={cn(
 						'w-full justify-start text-white hover:bg-zinc-800 hover:text-white',
-						isCollapsed ? 'px-2' : 'px-4'
+						isCollapsed ? 'px-2' : 'px-4',
+						isActive(item.href) ? 'bg-zinc-800' : ''
 					)}
 				>
 					<svelte:component this={item.icon} class="mr-2" size={20} />
