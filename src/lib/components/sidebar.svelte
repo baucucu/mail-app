@@ -16,18 +16,18 @@
 
 <nav
 	class={cn(
-		'flex flex-col bg-zinc-900 text-white transition-all duration-300',
+		'flex h-full flex-col bg-zinc-900 text-white transition-all duration-300',
 		isCollapsed ? 'w-16' : 'w-64'
 	)}
 >
-	<div class="flex h-14 items-center justify-center p-4">
+	<div class="flex h-14 items-center justify-center border-b border-zinc-700 p-4">
 		{#if !isCollapsed}
 			<span class="text-xl font-bold">Logo</span>
 		{:else}
 			<span class="text-xl font-bold">L</span>
 		{/if}
 	</div>
-	<ul class="flex-1 px-2">
+	<ul class="flex-1 px-2 py-4">
 		{#each navItems as item}
 			<li class="mb-2">
 				<Button
