@@ -162,8 +162,8 @@
 	</CardContent>
 	<CardFooter class="flex justify-between">
 		{#if selectedFolder && !isSelectingNew}
-			<Button variant="outline" on:click={resetFolderSelection}>Reset Folder</Button>
-			<Button on:click={() => (isSelectingNew = true)}>Change Folder</Button>
+			<Button variant="destructive" on:click={resetFolderSelection}>Reset Folder</Button>
+			<!-- <Button on:click={() => (isSelectingNew = true)}>Change Folder</Button> -->
 		{:else}
 			<Button on:click={createPicker} disabled={!isConnected || !isPickerLoaded}>
 				Select Folder
