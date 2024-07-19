@@ -1,10 +1,12 @@
-<script lang="ts">
+<script>
 	import { onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import AppHeader from '$lib/components/AppHeader.svelte';
 	import { browser } from '$app/environment';
+	import { supabase } from '$lib/utils/supabaseClient';
+	import { goto } from '$app/navigation';
 
 	const isSidebarOpen = writable(true);
 	const isSmallScreen = writable(false);
@@ -20,7 +22,18 @@
 		}
 	}
 
+	async function checkAuth() {
+		const {
+			data: { session }
+		} = await supabase.auth.getSession();
+		if (!session) {
+			goto('/');
+		}
+	}
+
 	onMount(() => {
+		checkAuth();
+
 		isClientSide = true;
 		const checkScreenSize = () => {
 			$isSmallScreen = window.innerWidth < 1024;

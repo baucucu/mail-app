@@ -9,12 +9,16 @@
 		DropdownMenuSeparator,
 		DropdownMenuTrigger
 	} from '$lib/components/ui/dropdown-menu';
+	import { supabase } from '$lib/utils/supabaseClient';
+	import { goto } from '$app/navigation';
 
 	export let userInitials: string = 'U';
 	export let userImage: string | undefined = undefined;
 
-	function handleLogout() {
-		console.log('Logging out...');
+	async function handleLogout() {
+		const { error } = await supabase.auth.signOut();
+		if (error) console.error('Error signing out:', error);
+		goto('/');
 	}
 </script>
 
