@@ -33,7 +33,6 @@
 
 	onMount(() => {
 		checkAuth();
-
 		isClientSide = true;
 		const checkScreenSize = () => {
 			$isSmallScreen = window.innerWidth < 1024;

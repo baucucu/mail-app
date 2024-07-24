@@ -25,6 +25,6 @@
 	<SearchBox />
 	<div class="flex items-center space-x-4">
 		<div class="hidden sm:block"></div>
-		<UserAvatar userInitials="JD" />
+		<UserAvatar />
 	</div>
 </header>
