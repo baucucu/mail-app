@@ -2,55 +2,63 @@
 	import '../app.css';
 
 	import { supabase } from '$lib/utils/supabaseClient';
+	import { goto } from '$app/navigation';
 
-	const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+	async function checkExistingUser(email) {
+		const { data: users, error } = await supabase.from('users').select('id').eq('email', email);
+		if (error) {
+			console.error('Error checking existing user:', error);
+			return null;
+		}
+		if (users.length > 0) {
+			return users[0].id;
+		} else {
+			return null;
+		}
+	}
+
+	async function createUserRecord(id, email) {
+		// Create record in public.users table
+		const { data: user, error } = await supabase.from('users').insert([{ id, email }]).select();
+		console.log({ user, error });
+	}
+
+	async function createAccountRecord() {
+		// Create record in accounts table
+		const { data: account, error: accountError } = await supabase
+			.from('accounts')
+			.insert([{ name: 'New account' }])
+			.select();
+		console.log({ account, accountError });
+		return account[0].id;
+	}
+
+	async function createUserAccountRecord(user_id, account_id) {
+		// Create record in account_users table
+		const { data: userAccount, error: userAccountError } = await supabase
+			.from('user_accounts')
+			.insert([{ user_id, account_id, role: 'admin' }])
+			.select();
+		console.log({ userAccount, userAccountError });
+	}
+
+	supabase.auth.onAuthStateChange(async (event, session) => {
+		console.log({ event });
 		if (event === 'SIGNED_IN') {
 			console.log({ session });
 			const { user } = session;
 			const { email, id } = user;
 			console.log({ email, id });
-
-			// Check if user exists in public.users table
-			const { data: userData, error: userError } = await supabase
-				.from('users')
-				.select('*')
-				.eq('email', email);
-
-			if (userError) {
-				console.log(userError);
-			}
-			console.log({ userData });
-
-			if (userData.length === 0) {
-				// Create record in public.users table
-				const { data: user, error } = await supabase.from('users').insert([{ id, email }]).select();
-				console.log({ user, error });
-
-				// Create record in accounts table
-				const { data: account, error: accountError } = await supabase
-					.from('accounts')
-					.insert([{ name: 'New account' }])
-					.select();
-				if (accountError) {
-					console.log(error || accountError);
-				}
-				console.log({ account });
-
-				// Create record in user_accounts table
-				const { data: user_accounts, error: user_accountsError } = await supabase
-					.from('user_accounts')
-					.insert([{ user_id: id, account_id: account[0].id, role: 'admin' }])
-					.select();
-				if (user_accountsError) {
-					console.log(user_accountsError);
-				}
-				console.log({ user_accounts });
+			const user_id = await checkExistingUser(email);
+			if (!user_id) {
+				await createUserRecord(id, email);
+				const account = await createAccountRecord();
+				await createUserAccountRecord(id, account);
 			}
 		}
-		// Cleanup auth listener on component destroy
-		return () => {
-			authListener.unsubscribe();
-		};
+		if (event === 'SIGNED_OUT') {
+			goto('/');
+		}
 	});
 </script>
 
